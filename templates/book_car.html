@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}GoVroom - Book Car{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Book {{ car.make }} {{ car.model }}</h2>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Car Details</h5>
+                        <p><strong>Make:</strong> {{ car.make }}</p>
+                        <p><strong>Model:</strong> {{ car.model }}</p>
+                        <p><strong>Year:</strong> {{ car.year }}</p>
+                        <p><strong>Price per Day:</strong> ${{ "%.2f"|format(car.price_per_day) }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Description</h5>
+                        <p>{{ car.description }}</p>
+                    </div>
+                </div>
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - GoVroom{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Complete Your Payment</h2>
+                    
+                    <div class="booking-details mb-4">
+                        <h4>Booking Details</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Car:</strong> {{ booking.car.make }} {{ booking.car.model }}</p>
+                                <p><strong>Start Date:</strong> {{ booking.start_date.strftime('%Y-%m-%d') }}</p>
+                                <p><strong>End Date:</strong> {{ booking.end_date.strftime('%Y-%m-%d') }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Duration:</strong> {{ (booking.end_date - booking.start_date).days + 1 }} days</p>
+                                <p><strong>Price per Day:</strong> RM{{ "%.2f"|format(booking.car.price_per_day) }}</p>
+                                <p><strong>Total Amount:</strong> <span class="text-primary h4">RM{{ "%.2f"|format(booking.total_price) }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label">Select Payment Method</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="credit_card" value="credit_card" required>
+                                    <label class="form-check-label" for="credit_card">Credit Card</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="online_banking" value="online_banking">
+                                    <label class="form-check-label" for="online_banking">Online Banking</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="e_wallet" value="e_wallet">
+                                    <label class="form-check-label" for="e_wallet">E-Wallet</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Pay Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

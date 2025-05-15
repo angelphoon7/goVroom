@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap">
+    
+    <style>
+        :root {
+            --primary-color: #00f3ff;
+            --secondary-color: #ff00c8;
+            --accent-color: #fcee09;
+            --dark-bg: #0a0b16;
+            --dark-surface: #141528;
+            --text-color: #e0e0ff;
+            --text-shadow: 0 0 5px rgba(0, 243, 255, 0.7);
+            --box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+            --neon-glow: 0 0 10px rgba(0, 243, 255, 0.8), 0 0 20px rgba(0, 243, 255, 0.5), 0 0 30px rgba(0, 243, 255, 0.3);
+            --border-radius: 0;
+            --card-border: 1px solid var(--primary-color);
+        }
+
+        /* Global text color override to ensure visibility */
+        * {
+            color: var(--text-color);
+        }
+
+        /* Override for form controls that might have black text by default */
+        select, input, textarea, .form-select, .form-control {
+            color: var(--text-color) !important;
+        }
+
+        /* Override Bootstrap text colors */
+        .text-dark, .text-black {
+            color: var(--text-color) !important;
+        }
+
+        /* Ensure dropdown menus are visible */
+        .dropdown-menu {
+            background-color: var(--dark-surface);
+            border: 1px solid var(--primary-color);
+        }
+
+        .dropdown-item {
+            color: var(--text-color);
+        }
+
+        .dropdown-item:hover, .dropdown-item:focus {
+            background-color: rgba(0, 243, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        /* Fix for card text */
+        .card-text {
+            color: var(--text-color) !important;
+        }
+
+        /* Fix for placeholders */
+        ::placeholder {
+            color: rgba(224, 224, 255, 0.7) !important;
+        }
+
+        /* Fix for table elements */
+        table, th, td, tr {
+            color: var(--text-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .table {
+            color: var(--text-color) !important;
+        }
+
+        /* Fix for list group items */
+        .list-group-item {
+            background-color: var(--dark-surface);
+            color: var(--text-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Fix for modal content */
+        .modal-content {
+            background-color: var(--dark-surface);
+            color: var(--text-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        /* Fix for pagination */
+        .page-link {
+            background-color: var(--dark-surface);
+            color: var(--text-color);
+            border-color: var(--primary-color);
+        }
+
+        .page-link:hover {
+            background-color: rgba(0, 243, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 var(--secondary-color), -0.05em -0.025em 0 var(--primary-color); }
+            14% { text-shadow: 0.05em 0 0 var(--secondary-color), -0.05em -0.025em 0 var(--primary-color); }
+            15% { text-shadow: -0.05em -0.025em 0 var(--secondary-color), 0.025em 0.025em 0 var(--primary-color); }
+            49% { text-shadow: -0.05em -0.025em 0 var(--secondary-color), 0.025em 0.025em 0 var(--primary-color); }
+            50% { text-shadow: 0.025em 0.05em 0 var(--secondary-color), 0.05em 0 0 var(--primary-color); }
+            99% { text-shadow: 0.025em 0.05em 0 var(--secondary-color), 0.05em 0 0 var(--primary-color); }
+            100% { text-shadow: -0.025em 0 0 var(--secondary-color), -0.025em -0.025em 0 var(--primary-color); }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes flicker {
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% { opacity: 1; }
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999% { opacity: 0.8; }
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            background-image: 
+                linear-gradient(rgba(10, 11, 22, 0.8), rgba(10, 11, 22, 0.9)),
+                url('https://images.unsplash.com/photo-1633265486064-086b219458ec?q=80&w=1470');
+            background-attachment: fixed;
+            background-size: cover;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.3;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: rgba(0, 243, 255, 0.5);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.3;
+        }
+        
+        .glitch-text {
+            animation: glitch 2s infinite alternate-reverse;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .card:hover .card-title {
+            animation: glitch 1s infinite alternate-reverse;
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            text-shadow: var(--text-shadow);
+            animation: flicker 8s infinite;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .navbar {
+            background-color: rgba(20, 21, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--primary-color);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .nav-link {
+            color: var(--text-color) !important;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            text-shadow: var(--text-shadow);
+        }
+        
+        /* Admin Dashboard Link Style */
+        .nav-link[href*="admin_dashboard"] {
+            color: #000000 !important;
+        }
+        
+        /* Admin Dashboard Section Styles */
+        .card-title[class*="management"],
+        .nav-link[data-bs-target*="users"],
+        .nav-link[data-bs-target*="cars"],
+        .nav-link[data-bs-target*="bookings"] {
+            color: #000000 !important;
+        }
+        
+        /* Admin Dashboard Content Styles */
+        #adminTabsContent .card-title,
+        #adminTabsContent .table,
+        #adminTabsContent .table th,
+        #adminTabsContent .table td,
+        #adminTabsContent .form-select,
+        #adminTabsContent .btn {
+            color: #000000 !important;
+        }
+
+        /* Management Section Headers */
+        #adminTabsContent .card-title {
+            color: #e0e0ff !important;
+        }
+        
+        /* Selection Buttons */
+        .nav-tabs .nav-link {
+            color: #e0e0ff !important;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            box-shadow: var(--neon-glow);
+        }
+        
+        .nav-link:hover:after {
+            width: 80%;
+        }
+
+        .card {
+            background-color: var(--dark-surface);
+            border: var(--card-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.7);
+        }
+        
+        .card-title {
+            color: var(--primary-color);
+            text-shadow: var(--text-shadow);
+        }
+
+        .footer {
+            background-color: var(--dark-surface);
+            color: var(--text-color);
+            border-top: 1px solid var(--primary-color);
+            padding: 3rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            text-shadow: var(--text-shadow);
+        }
+
+        .btn {
+            border-radius: var(--border-radius);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            padding: 0.6rem 1.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--dark-bg);
+            box-shadow: var(--neon-glow);
+        }
+        
+        .btn-primary:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn-primary:hover:after {
+            left: 100%;
+        }
+        
+        /* Fix for other button variants */
+        .btn-secondary, .btn-info, .btn-success, .btn-danger, .btn-warning, .btn-light, .btn-dark {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+        }
+        
+        .btn-secondary:hover, .btn-info:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover, .btn-light:hover, .btn-dark:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+            box-shadow: var(--neon-glow);
+        }
+        
+        /* Fix for all links */
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--secondary-color);
+            text-shadow: var(--text-shadow);
+        }
+        
+        /* Fix for card link */
+        .card a:not(.btn) {
+            color: var(--primary-color);
+        }
+        
+        .card a:not(.btn):hover {
+            color: var(--secondary-color);
+        }
+        
+        /* Override for navbar toggler */
+        .navbar-toggler {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .navbar-light .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 243, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        .alert {
+            background-color: var(--dark-surface);
+            color: var(--text-color);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0;
+        }
+        
+        .form-control {
+            background-color: rgba(20, 21, 40, 0.7);
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            box-shadow: var(--neon-glow);
+            background-color: rgba(20, 21, 40, 0.9);
+            border-color: var(--primary-color);
+            color: var(--text-color);
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border: 1px solid var(--primary-color);
+            border-radius: 50%;
+            text-align: center;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-bg) !important;
+            box-shadow: var(--neon-glow);
+            transform: translateY(-3px);
+        }
+
+        /* AI Chatbox Styles */
+        .ai-chatbox-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        .ai-chatbox {
+            display: none; /* Initially hidden, will be shown via JS */
+            width: 350px;
+            height: 450px;
+            background-color: var(--dark-surface);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--box-shadow), 0 0 20px rgba(255, 0, 200, 0.3);
+            transform: translateY(10px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            position: relative;
+        }
+        
+        .ai-chatbox:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
+            background-size: 200% 100%;
+            animation: gradientMove 3s linear infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .ai-chatbox.open {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .ai-chatbox-header {
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .ai-avatar {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .ai-title {
+            flex-grow: 1;
+        }
+        
+        .ai-title h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .ai-title small {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .ai-controls button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            transition: all 0.2s ease;
+        }
+        
+        .ai-controls button:hover {
+            color: var(--primary-color);
+        }
+        
+        .ai-chatbox-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: rgba(10, 11, 22, 0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--dark-bg);
+        }
+        
+        .ai-chatbox-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .ai-chatbox-body::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        
+        .ai-chatbox-body::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .ai-message {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .ai-incoming {
+            justify-content: flex-start;
+        }
+        
+        .ai-outgoing {
+            justify-content: flex-end;
+        }
+        
+        .ai-message-content {
+            max-width: 80%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-incoming .ai-message-content {
+            background-color: rgba(0, 243, 255, 0.1);
+            border-left: 2px solid var(--primary-color);
+            color: var(--text-color);
+        }
+        
+        .ai-outgoing .ai-message-content {
+            background-color: rgba(255, 0, 200, 0.1);
+            border-right: 2px solid var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        .ai-message-content p {
+            margin: 0 0 5px 0;
+        }
+        
+        .ai-timestamp {
+            font-size: 10px;
+            opacity: 0.7;
+            display: block;
+            text-align: right;
+        }
+        
+        .ai-chatbox-footer {
+            padding: 10px;
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+        }
+        
+        .ai-input {
+            flex-grow: 1;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            background-color: rgba(20, 21, 40, 0.7);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-right: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+        }
+        
+        .ai-send-btn {
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+        }
+        
+        .ai-send-btn:hover {
+            background-color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(255, 0, 200, 0.7);
+        }
+        
+        .ai-chatbox-toggle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .ai-chatbox-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.8), 0 0 30px rgba(0, 243, 255, 0.4);
+        }
+        
+        .ai-chatbox-toggle i {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-car-side"></i> <span class="glitch-text">G<span style="color: var(--secondary-color);">o</span>Vr<span style="color: var(--accent-color);">o</span>om</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="color: var(--primary-color);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('add_car') }}">Add Car</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('booking_history') }}">My Bookings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mb-4">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- AI Assistant Chatbox -->
+    <div class="ai-chatbox-container">
+        <div class="ai-chatbox" id="aiChatbox">
+            <div class="ai-chatbox-header">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ai-title">
+                    <h5 class="glitch-text">NEXUS</h5>
+                    <small>AI Assistant</small>
+                </div>
+                <div class="ai-controls">
+                    <button id="aiMinimize"><i class="fas fa-minus"></i></button>
+                </div>
+            </div>
+            <div class="ai-chatbox-body" id="aiChatBody">
+                <div class="ai-message ai-incoming">
+                    <div class="ai-message-content">
+                        <p>Hello! I'm NEXUS, your cybernetic assistant. How can I help you today?</p>
+                        <span class="ai-timestamp">Now</span>
+                    </div>
+                </div>
+                <!-- More messages will be added here dynamically -->
+            </div>
+            <div class="ai-chatbox-footer">
+                <input type="text" id="aiInput" placeholder="Type your message here..." class="ai-input">
+                <button id="aiSend" class="ai-send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <button class="ai-chatbox-toggle" id="aiChatboxToggle">
+            <i class="fas fa-robot"></i>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-car-side"></i> G<span style="color: var(--secondary-color);">o</span>Vr<span style="color: var(--accent-color);">o</span>om</h5>
+                    <p class="mt-3">Your trusted cybernetic vehicle provider. Next-gen cars for the streets of tomorrow.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-map-marker-alt"></i> Connect</h5>
+                    <ul class="footer-links mt-3">
+                        <li><i class="fas fa-phone"></i> +60 3-1234 5678</li>
+                        <li><i class="fas fa-envelope"></i> netrunner@govroom.my</li>
+                        <li><i class="fas fa-map-pin"></i> Neo Kuala Lumpur, Sector 7, Block 101</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-link"></i> Quick Links</h5>
+                    <ul class="footer-links mt-3">
+                        <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a></li>
+                        {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('booking_history') }}"><i class="fas fa-history"></i> My Bookings</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <p class="mt-3 mb-0">&copy; {{ now.year }} G<span style="color: var(--secondary-color);">o</span>Vr<span style="color: var(--accent-color);">o</span>om Corp. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <!-- AI Chatbox JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const aiChatbox = document.getElementById('aiChatbox');
+            const aiChatboxToggle = document.getElementById('aiChatboxToggle');
+            const aiMinimize = document.getElementById('aiMinimize');
+            const aiInput = document.getElementById('aiInput');
+            const aiSend = document.getElementById('aiSend');
+            const aiChatBody = document.getElementById('aiChatBody');
+            
+            // Initial state - chatbox is hidden
+            aiChatbox.style.display = 'none';
+            
+            // Sample responses to simulate AI
+            const responses = [
+                "I'm scanning the database for that information...",
+                "Interesting question. Let me process that...",
+                "I'm here to assist with all your vehicle needs.",
+                "You might want to check out our latest models. They're quite impressive.",
+                "My neural networks suggest that might be a good choice.",
+                "Would you like me to show you our special offers?",
+                "I can help you book a test drive if you're interested.",
+                "The cybernetic highways await. How can I assist your journey?",
+                "My protocols indicate that's an excellent query.",
+                "Running diagnostics on that request...",
+                "Your satisfaction is my primary directive."
+            ];
+            
+            // Toggle chatbox visibility
+            aiChatboxToggle.addEventListener('click', function() {
+                if (aiChatbox.style.display === 'none') {
+                    aiChatbox.style.display = 'flex';
+                    setTimeout(() => {
+                        aiChatbox.classList.add('open');
+                    }, 10);
+                } else {
+                    aiChatbox.classList.remove('open');
+                    setTimeout(() => {
+                        aiChatbox.style.display = 'none';
+                    }, 300);
+                }
+            });
+            
+            // Minimize chatbox
+            aiMinimize.addEventListener('click', function() {
+                aiChatbox.classList.remove('open');
+                setTimeout(() => {
+                    aiChatbox.style.display = 'none';
+                }, 300);
+            });
+            
+            // Send message function
+            function sendMessage() {
+                const message = aiInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message to chat
+                addMessage(message, 'outgoing');
+                aiInput.value = '';
+                
+                // Scroll to bottom
+                scrollToBottom();
+                
+                // Simulate AI "typing"
+                setTimeout(() => {
+                    // Show typing indicator
+                    const typingEl = document.createElement('div');
+                    typingEl.className = 'ai-message ai-incoming';
+                    typingEl.innerHTML = `
+                        <div class="ai-message-content typing-indicator">
+                            <p><span class="dot"></span><span class="dot"></span><span class="dot"></span></p>
+                        </div>
+                    `;
+                    aiChatBody.appendChild(typingEl);
+                    scrollToBottom();
+                    
+                    // After a delay, remove typing indicator and show response
+                    setTimeout(() => {
+                        aiChatBody.removeChild(typingEl);
+                        
+                        // Get AI response
+                        const response = getAIResponse(message);
+                        addMessage(response, 'incoming');
+                        scrollToBottom();
+                    }, 1500);
+                }, 500);
+            }
+            
+            // Handle send button click
+            aiSend.addEventListener('click', sendMessage);
+            
+            // Handle enter key press
+            aiInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Add message to chat
+            function addMessage(text, type) {
+                const now = new Date();
+                const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                             now.getMinutes().toString().padStart(2, '0');
+                
+                const messageEl = document.createElement('div');
+                messageEl.className = `ai-message ai-${type}`;
+                messageEl.innerHTML = `
+                    <div class="ai-message-content">
+                        <p>${text}</p>
+                        <span class="ai-timestamp">${time}</span>
+                    </div>
+                `;
+                aiChatBody.appendChild(messageEl);
+            }
+            
+            // Scroll chat to bottom
+            function scrollToBottom() {
+                aiChatBody.scrollTop = aiChatBody.scrollHeight;
+            }
+            
+            // Get AI response based on user input
+            function getAIResponse(userInput) {
+                // Simple keyword matching
+                userInput = userInput.toLowerCase();
+                
+                if (userInput.includes('hello') || userInput.includes('hi') || userInput.includes('hey')) {
+                    return "Hello! I'm NEXUS, your cybernetic vehicle assistant. How can I help you find the perfect ride today?";
+                }
+                else if (userInput.includes('car') && (userInput.includes('rent') || userInput.includes('book'))) {
+                    return "To rent a car, simply browse our selection on the homepage, select your preferred vehicle, and click 'Book Now'. You'll need to select your dates and complete the payment process. If you need assistance, refer to the contact information in the footer.";
+                }
+                else if (userInput.includes('how to use') || userInput.includes('navigate') || userInput.includes('help me use') || userInput.includes('app tutorial')) {
+                    return "Our app is simple to use: Browse cars on the homepage, filter by make or price if needed. Click on a car to view details, then 'Book Now' to select dates. After logging in, confirm your booking and complete payment. You can view your bookings anytime in 'My Bookings' after logging in.";
+                }
+                else if (userInput.includes('price') || userInput.includes('cost') || userInput.includes('fee')) {
+                    return "Our rental prices range from RM100 to RM250 per day depending on the model. Perodua models start at RM100-130/day, Proton models at RM110-220/day, and premium models like Toyota and Honda range from RM180-250/day. All prices include basic insurance.";
+                }
+                else if (userInput.includes('payment') || userInput.includes('pay')) {
+                    return "We accept credit/debit cards for online payments. Once you select a vehicle and booking dates, you'll be directed to our secure payment gateway. A deposit of 30% is required at booking, with the balance due at pickup.";
+                }
+                else if (userInput.includes('cancel') || userInput.includes('cancellation')) {
+                    return "Cancellations made 48 hours before pickup receive a full refund. Cancellations within 48 hours incur a 30% fee. You can manage your bookings in the 'My Bookings' section after logging in.";
+                }
+                else if (userInput.includes('contact') || userInput.includes('support') || userInput.includes('problem') || userInput.includes('issue')) {
+                    return "For any assistance or issues, please refer to our contact information at the bottom of the page in the footer section. You can reach our team via phone or email. We're always ready to help with your vehicle rental needs.";
+                }
+                else if (userInput.includes('register') || userInput.includes('sign up') || userInput.includes('account')) {
+                    return "To create an account, click 'Register' in the top navigation bar. You'll need to provide your email, create a password, and enter your name and phone number. Your Malaysian phone number format should be 601X-XXXXXXX. Registration takes less than a minute.";
+                }
+                else if (userInput.includes('login') || userInput.includes('sign in')) {
+                    return "To login, click the 'Login' button in the top navigation bar and enter your registered email and password. If you've forgotten your password, there's a recovery option on the login page.";
+                }
+                else if (userInput.includes('pickup') || userInput.includes('delivery') || userInput.includes('collect')) {
+                    return "You can collect your vehicle from our locations throughout Malaysia. During booking, you'll select your preferred pickup location. We offer pickup services in Kuala Lumpur, Petaling Jaya, Shah Alam, Subang Jaya, and other major cities.";
+                }
+                else if (userInput.includes('car models') || userInput.includes('available cars') || userInput.includes('what cars')) {
+                    return "We offer a variety of models including Perodua (Bezza, Axia, Myvi), Proton (Saga, X50), Toyota (Vios, Hilux), and Honda (City). You can filter vehicles by make, price range, and other features on our homepage.";
+                }
+                else if (userInput.includes('insurance') || userInput.includes('coverage')) {
+                    return "All rentals include basic insurance covering vehicle damage with a RM1,000 excess. You can purchase premium coverage to reduce or eliminate the excess amount during the booking process. Personal accident insurance is also available as an add-on.";
+                }
+                else if (userInput.includes('requirements') || userInput.includes('documents')) {
+                    return "To rent a vehicle, you need a valid Malaysian driving license or international driving permit, identification (IC/passport), and a credit card for the security deposit. Drivers must be at least 23 years old with minimum 1 year driving experience.";
+                }
+                else if (userInput.includes('duration') || userInput.includes('how long')) {
+                    return "Our minimum rental period is 24 hours. There's no maximum duration for rentals. You can extend your rental through your account if the vehicle is available. For any special arrangements, please contact us using the information in the footer.";
+                }
+                else if (userInput.includes('thanks') || userInput.includes('thank you')) {
+                    return "You're welcome! The neon roads await your journey. Is there anything else you need assistance with regarding our vehicle rentals?";
+                }
+                else if (userInput.includes('bye') || userInput.includes('goodbye')) {
+                    return "Goodbye! Safe travels in the neon streets of Neo Malaysia. Return to this interface whenever you need vehicle assistance. NEXUS signing off.";
+                }
+                else if (userInput.includes('cyberpunk') || userInput.includes('theme')) {
+                    return "Our cyberpunk aesthetic reflects our vision of the future of mobility - sleek, cutting-edge, and digitally enhanced. The neon-lit interface helps you navigate our vehicle rental platform with style.";
+                }
+                // Check for off-topic queries
+                else if (
+                    userInput.includes('food') || 
+                    userInput.includes('restaurant') || 
+                    userInput.includes('dating') || 
+                    userInput.includes('medical') || 
+                    userInput.includes('doctor') || 
+                    userInput.includes('invest') || 
+                    userInput.includes('stock') || 
+                    userInput.includes('cryptocurrency') || 
+                    userInput.includes('legal') || 
+                    userInput.includes('lawyer') || 
+                    userInput.includes('gambling') ||
+                    userInput.includes('game') ||
+                    userInput.includes('movie') ||
+                    userInput.includes('show') ||
+                    userInput.includes('weather') ||
+                    userInput.includes('politics')
+                ) {
+                    return "I apologize, but I'm designed to assist only with vehicle rental and booking-related inquiries. For other topics, please consult appropriate services. How can I help you with your car rental needs today?";
+                }
+                else {
+                    // More specific responses for common car-related queries
+                    if (userInput.includes('fuel') || userInput.includes('gas') || userInput.includes('petrol')) {
+                        return "All our vehicles are delivered with a full tank of fuel. You're expected to return the vehicle with a full tank, or we can refill it for you at market price plus a service fee. Most of our vehicles run on RON95 petrol.";
+                    }
+                    else if (userInput.includes('damage') || userInput.includes('accident')) {
+                        return "In case of damage or accident, please contact our emergency hotline immediately using the contact information in the footer. Document the incident with photos and file a police report for insurance purposes. Our roadside assistance is available 24/7.";
+                    }
+                    else if (userInput.includes('location') || userInput.includes('where')) {
+                        return "Our vehicles are available across major Malaysian cities including Kuala Lumpur, Penang, Johor Bahru, Melaka, Ipoh, and Kota Kinabalu. You can view specific pickup locations by starting the booking process for any vehicle.";
+                    }
+                    else if (userInput.includes('booking') || userInput.includes('reservation')) {
+                        return "Your booking is confirmed instantly after payment. You'll receive a confirmation email with all details including pickup instructions, contact numbers, and your reservation code. You can manage or view your bookings in the 'My Bookings' section.";
+                    }
+                    else if (userInput.includes('discount') || userInput.includes('offer') || userInput.includes('promo')) {
+                        return "For any information about current special rates or offers, please contact our customer service team using the contact details in the footer section at the bottom of every page.";
+                    }
+                    
+                    // Default random responses as fallback
+                    return responses[Math.floor(Math.random() * responses.length)];
+                }
+            }
+            
+            // Add CSS for typing indicator
+            const style = document.createElement('style');
+            style.textContent = `
+                .typing-indicator {
+                    background-color: rgba(0, 243, 255, 0.05) !important;
+                }
+                
+                .typing-indicator .dot {
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: var(--primary-color);
+                    margin-right: 3px;
+                    animation: typingBounce 1.3s linear infinite;
+                    box-shadow: 0 0 5px var(--primary-color);
+                }
+                
+                .typing-indicator .dot:nth-child(2) {
+                    animation-delay: 0.15s;
+                }
+                
+                .typing-indicator .dot:nth-child(3) {
+                    animation-delay: 0.3s;
+                }
+                
+                @keyframes typingBounce {
+                    0%, 60%, 100% { transform: translateY(0); }
+                    30% { transform: translateY(-4px); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html> 
