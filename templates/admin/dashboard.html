@@ -30,8 +30,8 @@
                         {% for car in pending_cars %}
                         <tr>
                             <td style="color: #000 !important;">
-                                <strong>{{ car.make }} {{ car.model }}</strong><br>
-                                <small>Year: {{ car.year }}</small>
+                                <strong style="color: #000 !important;">{{ car.make }} {{ car.model }}</strong><br>
+                                <small style="color: #000 !important;">Year: {{ car.year }}</small>
                             </td>
                             <td style="color: #000 !important;">{{ car.owner.name }}</td>
                             <td style="color: #000 !important;">${{ car.price_per_day }}</td>
@@ -88,8 +88,8 @@
                         {% for car in all_cars %}
                         <tr>
                             <td style="color: #000 !important;">
-                                <strong>{{ car.make }} {{ car.model }}</strong><br>
-                                <small>Year: {{ car.year }}</small>
+                                <strong style="color: #000 !important;">{{ car.make }} {{ car.model }}</strong><br>
+                                <small style="color: #000 !important;">Year: {{ car.year }}</small>
                             </td>
                             <td style="color: #000 !important;">{{ car.owner.name }}</td>
                             <td style="color: #000 !important;">{{ car.status|capitalize }}</td>
@@ -200,7 +200,7 @@
                             </td>
                             <td style="color: #000 !important;">
                                 <form action="{{ url_for('admin_update_booking_status', booking_id=booking.id) }}" method="post">
-                                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" style="color: #000 !important;">
                                         <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
                                         <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
                                         <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
