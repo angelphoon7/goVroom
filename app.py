@@ -49,45 +49,8 @@ def admin_required(f):
 
 @app.route('/')
 def index():
-    # Get filter parameters
-    make = request.args.get('make')
-    min_price = request.args.get('min_price', type=float)
-    max_price = request.args.get('max_price', type=float)
-    sort_by = request.args.get('sort')
-
-    # Base query
-    query = CarModel.query
-
-    # Apply filters
-    if make:
-        query = query.filter(CarModel.make == make)
-    if min_price is not None:
-        query = query.filter(CarModel.price_per_day >= min_price)
-    if max_price is not None:
-        query = query.filter(CarModel.price_per_day <= max_price)
-
-    # Apply sorting
-    if sort_by == 'price_low':
-        query = query.order_by(CarModel.price_per_day.asc())
-    elif sort_by == 'price_high':
-        query = query.order_by(CarModel.price_per_day.desc())
-    elif sort_by == 'newest':
-        query = query.order_by(CarModel.year.desc())
-
-    # Get unique makes for filter dropdown
-    makes = db.session.query(CarModel.make).distinct().all()
-    makes = [make[0] for make in makes]
-
-    # Execute query
-    cars = query.all()
-
-    return render_template('index.html', 
-                         cars=cars,
-                         makes=makes,
-                         selected_make=make,
-                         min_price=min_price,
-                         max_price=max_price,
-                         sort_by=sort_by)
+    cars = CarModel.query.filter_by(status='approved', is_available=True).all()
+    return render_template('index.html', cars=cars)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -164,44 +127,47 @@ def add_car():
         price_per_day = request.form.get('price_per_day')
         description = request.form.get('description')
         address = request.form.get('address')
-        image = request.files.get('image')  # Get the uploaded image file
-        
-        # Get location coordinates
+        license_number = request.form.get('license_number')
+        license_expiry = request.form.get('license_expiry')
+        image = request.files.get('image')
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
         location = f"{latitude},{longitude}" if latitude and longitude else None
-
         if not all([make, model, year, price_per_day, description]):
             flash('All fields are required')
             return redirect(url_for('add_car'))
-
-        # Save the image file
         if image and image.filename:
             image_filename = secure_filename(image.filename)
             image_path = os.path.join('static', 'images', 'cars', image_filename)
-            os.makedirs(os.path.dirname(image_path), exist_ok=True)  # Create directory if it doesn't exist
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
             image.save(image_path)
-            image_url = '/' + image_path  # Prepend / for URL path
+            image_url = '/' + image_path
         else:
-            # If no image provided, use a placeholder URL
             image_url = 'https://via.placeholder.com/400x300?text=No+Image+Available'
-
         new_car = CarModel(
             make=make,
             model=model,
-            year=year,
+            year=int(year),
             price_per_day=float(price_per_day),
             description=description,
             owner_id=current_user.id,
             image_filename=image_url,
+            location=location,
             address=address,
-            location=location
+            license_number=license_number,
+            license_expiry=datetime.strptime(license_expiry, '%Y-%m-%d').date(),
+            status='pending'
         )
         db.session.add(new_car)
         db.session.commit()
-        flash('Car added successfully!')
-        return redirect(url_for('index'))
+        flash('Car added successfully and is pending admin approval!', 'info')
+        return redirect(url_for('car_pending'))
     return render_template('add_car.html')
+
+@app.route('/car_pending')
+@login_required
+def car_pending():
+    return render_template('car_pending.html')
 
 @app.route('/book-car/<int:car_id>', methods=['GET', 'POST'])
 @login_required
@@ -235,12 +201,18 @@ def book_car(car_id):
 @admin_required
 def admin_dashboard():
     users = User.query.all()
-    cars = CarModel.query.all()
+    pending_cars = CarModel.query.filter_by(status='pending').all()
+    all_cars = CarModel.query.all()
+    print('DEBUG: Pending cars:', [(car.id, car.make, car.model, car.status) for car in pending_cars])
     bookings = BookingModel.query.options(
         db.joinedload(BookingModel.user),
         db.joinedload(BookingModel.car)
     ).all()
-    return render_template('admin/dashboard.html', users=users, cars=cars, bookings=bookings)
+    return render_template('admin/dashboard.html', 
+                         users=users, 
+                         pending_cars=pending_cars,
+                         all_cars=all_cars,
+                         bookings=bookings)
 
 @app.route('/admin/toggle-admin/<int:user_id>', methods=['POST'])
 @login_required
@@ -390,6 +362,36 @@ def car_locations():
 def before_request():
     if current_user.is_authenticated:
         session.permanent = True  # Make session permanent for logged in users
+
+@app.route('/admin/approve_car/<int:car_id>', methods=['POST'])
+@login_required
+@admin_required
+def approve_car(car_id):
+    car = CarModel.query.get_or_404(car_id)
+    car.status = 'approved'
+    db.session.commit()
+    flash('Car approved successfully!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/reject_car/<int:car_id>', methods=['POST'])
+@login_required
+@admin_required
+def reject_car(car_id):
+    car = CarModel.query.get_or_404(car_id)
+    car.status = 'rejected'
+    db.session.commit()
+    flash('Car rejected.', 'info')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/toggle-car-availability/<int:car_id>', methods=['POST'])
+@login_required
+@admin_required
+def toggle_car_availability(car_id):
+    car = CarModel.query.get_or_404(car_id)
+    car.is_available = not car.is_available
+    db.session.commit()
+    flash(f"Car '{car.make} {car.model}' availability updated.", 'success')
+    return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':
     with app.app_context():

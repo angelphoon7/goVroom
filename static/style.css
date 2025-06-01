@@ -271,4 +271,58 @@ body {
 
 .footer-links a:hover {
     color: var(--secondary-color);
+}
+
+/* Car Availability Section (Admin Dashboard) */
+.admin-car-availability .card-header h3 {
+    color: #fff !important;
+    background: var(--primary-color) !important;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+.admin-car-availability .table th,
+.admin-car-availability .table td,
+.admin-car-availability .table td * {
+    color: #000 !important;
+}
+
+/* Pending Cars and Car Availability Section Headers (Admin Dashboard) */
+.admin-section-header .card-header h3 {
+    color: #fff !important;
+    background: var(--primary-color) !important;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.admin-section-header .table th,
+.admin-section-header .table td,
+.admin-section-header .table td *,
+.admin-section-header .table th * {
+    color: #000 !important;
+}
+
+.admin-section-header .card-body,
+.admin-section-header .card-body * {
+    color: #000 !important;
+}
+
+.admin-section-header .admin-section-title {
+    color: #fff !important;
+}
+
+.admin-section-header:nth-of-type(3) .table th,
+.admin-section-header:nth-of-type(3) .table td,
+.admin-section-header:nth-of-type(3) .table td *,
+.admin-section-header:nth-of-type(3) .table th *,
+.admin-section-header:nth-of-type(4) .table th,
+.admin-section-header:nth-of-type(4) .table td,
+.admin-section-header:nth-of-type(4) .table td *,
+.admin-section-header:nth-of-type(4) .table th * {
+    color: #fff !important;
+}
+.admin-section-header:nth-of-type(3) .card-body,
+.admin-section-header:nth-of-type(3) .card-body *,
+.admin-section-header:nth-of-type(4) .card-body,
+.admin-section-header:nth-of-type(4) .card-body * {
+    color: #fff !important;
 } 

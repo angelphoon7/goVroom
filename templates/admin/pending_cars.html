@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Pending Cars</h2>
+    <div class="row">
+        {% for car in cars %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/cars/' + car.image_filename) }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ car.make }} {{ car.model }} ({{ car.year }})</h5>
+                    <p class="card-text">{{ car.description }}</p>
+                    <p class="card-text"><strong>Price per day:</strong> ${{ car.price_per_day }}</p>
+                    <p class="card-text"><strong>Location:</strong> {{ car.location }}</p>
+                    <p class="card-text"><strong>Address:</strong> {{ car.address }}</p>
+                    <p class="card-text"><strong>License Number:</strong> {{ car.license_number }}</p>
+                    <p class="card-text"><strong>License Expiry:</strong> {{ car.license_expiry }}</p>
+                    <form action="{{ url_for('approve_car', car_id=car.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success">Approve</button>
+                    </form>
+                    <form action="{{ url_for('reject_car', car_id=car.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 
